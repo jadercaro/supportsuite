@@ -3,7 +3,7 @@ package com.telco.users.model;
 /**
  * Enum que representa los roles de usuario en el sistema.
  */
-public enum Role {
+public enum RoleEnum {
     /**
      * Rol para operadores que crean y gestionan órdenes de trabajo.
      */
