@@ -17,6 +17,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.config.Customizer;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -39,6 +44,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable()) // Deshabilitar CSRF para APIs REST sin estado
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITE_LIST_URLS).permitAll() // Permitir acceso a la white list
@@ -49,6 +55,31 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // Añadir nuestro filtro JWT antes del filtro estándar
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        // Especifica los orígenes permitidos (el frontend)
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:4200", "http://localhost:8081"));
+
+        // Especifica los métodos HTTP permitidos (GET, POST, etc.)
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+
+        // Especifica las cabeceras permitidas
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "x-auth-token"));
+
+        // Permite que el navegador exponga ciertas cabeceras a la aplicación frontend
+        configuration.setExposedHeaders(List.of("x-auth-token"));
+
+        // Permite el envío de credenciales (cookies, etc.)
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // Aplica esta configuración a todas las rutas de tu aplicación
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 
     @Bean
