@@ -40,7 +40,7 @@ public class User implements UserDetails {
     @Transient
     private String username;
 
-    @Column(name = "contraseña", nullable = false) // Mapea a la columna contraseña
+    @Column(name = "contrasena", nullable = false) // Mapea a la columna contraseña
     private String password;
 
     // Adaptación: Reemplazamos el enum por una relación Many-to-One
