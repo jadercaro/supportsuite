@@ -14,6 +14,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.telco.incidents.dto.IncidenciaRequestDTO;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import com.telco.incidents.controller.IIncidenciaController;
 
 @RestController
 @RequestMapping("/api/incidents")
@@ -43,5 +50,20 @@ public class IncidenciaControllerImpl implements IIncidenciaController {
 
         // 3. Devolver la página de DTOs en una respuesta 200 OK
         return ResponseEntity.ok(dtoPage);
+    }
+
+    @Override
+    @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
+    public ResponseEntity<IncidenciaResponseDTO> crearIncidencia(@Valid @RequestBody IncidenciaRequestDTO requestDTO) {
+
+        // 1. Llamar al servicio para crear la entidad
+        Incidencia nuevaIncidencia = incidenciaService.crearIncidencia(requestDTO);
+
+        // 2. Mapear la entidad guardada a un DTO de respuesta
+        IncidenciaResponseDTO responseDTO = incidenciaMapper.toDto(nuevaIncidencia);
+
+        // 3. Devolver una respuesta 201 Created
+        return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 }
