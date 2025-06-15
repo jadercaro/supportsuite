@@ -1,6 +1,7 @@
 package com.telco.incidents.service;
 
 import com.telco.incidents.model.Incidencia;
+import com.telco.incidents.dto.IncidenciaRequestDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -24,4 +25,11 @@ public interface IIncidenciaService {
             Long resultadoId,
             Pageable pageable
     );
+
+    /**
+     * Crea una nueva incidencia a partir de los datos de la solicitud.
+     * @param requestDTO DTO con los datos para la nueva incidencia.
+     * @return La entidad Incidencia recién creada y guardada.
+     */
+    Incidencia crearIncidencia(IncidenciaRequestDTO requestDTO);
 }
