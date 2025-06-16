@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import org.springframework.web.bind.annotation.PathVariable;
+
 @Tag(name = "Incidents Management", description = "API para la gestión y consulta de incidencias")
 public interface IIncidenciaController {
 
@@ -45,4 +47,19 @@ public interface IIncidenciaController {
             }
     )
     ResponseEntity<IncidenciaResponseDTO> crearIncidencia(@Valid @RequestBody IncidenciaRequestDTO requestDTO);
+
+    /**
+     * Obtiene los detalles de una incidencia específica por su ID.
+     * @param id El ID de la incidencia a recuperar.
+     * @return Una respuesta con el DTO de la incidencia y un estado 200 OK.
+     */
+    @Operation(summary = "Obtener detalle de una incidencia por ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Incidencia encontrada"),
+                    @ApiResponse(responseCode = "404", description = "Incidencia no encontrada"),
+                    @ApiResponse(responseCode = "403", description = "Acceso denegado")
+            })
+    ResponseEntity<IncidenciaResponseDTO> getIncidenciaById(
+            @Parameter(description = "ID de la incidencia") @PathVariable Long id
+    );
 }

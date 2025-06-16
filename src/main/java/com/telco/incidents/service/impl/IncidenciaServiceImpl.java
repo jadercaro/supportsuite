@@ -15,6 +15,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityNotFoundException;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -104,5 +106,12 @@ public class IncidenciaServiceImpl implements IIncidenciaService {
 
         // 3. Guardar y devolver la nueva entidad
         return incidenciaRepository.save(nuevaIncidencia);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Incidencia findById(Long id) {
+        return incidenciaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Incidencia no encontrada con ID: " + id));
     }
 }

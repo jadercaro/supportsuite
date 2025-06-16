@@ -20,6 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import com.telco.incidents.controller.IIncidenciaController;
 
 @RestController
@@ -65,5 +68,20 @@ public class IncidenciaControllerImpl implements IIncidenciaController {
 
         // 3. Devolver una respuesta 201 Created
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
+    }
+
+    @Override
+    @GetMapping("/{id}") // Mapea a peticiones GET a /api/incidents/{un_numero}
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'TECHNICIAN')") // Permitimos que todos los usuarios logueados vean los detalles
+    public ResponseEntity<IncidenciaResponseDTO> getIncidenciaById(@PathVariable Long id) {
+
+        // 1. Llamar al servicio para buscar la entidad
+        Incidencia incidencia = incidenciaService.findById(id);
+
+        // 2. Mapear la entidad a un DTO de respuesta
+        IncidenciaResponseDTO responseDTO = incidenciaMapper.toDto(incidencia);
+
+        // 3. Devolver el DTO en una respuesta 200 OK
+        return ResponseEntity.ok(responseDTO);
     }
 }
