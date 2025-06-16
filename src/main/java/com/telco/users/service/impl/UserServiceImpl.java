@@ -8,6 +8,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.telco.users.model.Rol;
+import com.telco.users.repository.RolRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.telco.users.model.User;
+
 /**
  * Implementación del servicio de usuarios.
  */
@@ -16,6 +23,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements IUserService, UserDetailsService {
 
     private final IUserRepository userRepository;
+    private final RolRepository rolRepository;
 
     /**
      * Implementación del método de la interfaz UserDetailsService.
@@ -32,5 +40,30 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User with username '" + username + "' not found."));
     }
 
-    // Aquí irían las implementaciones de los métodos definidos en IUserService.
+    @Override
+    @Transactional
+    public User updateUserRole(Long userId, Long newRoleId) {
+        // 1. Buscar el usuario
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con ID: " + userId));
+
+        // 2. Buscar el nuevo rol
+        Rol newRol = rolRepository.findById(newRoleId)
+                .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado con ID: " + newRoleId));
+
+        // 3. Actualizar el rol y guardar
+        user.setRol(newRol);
+        return userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void deleteUser(Long userId) {
+        // 1. Verificar si el usuario existe antes de intentar borrarlo
+        if (!userRepository.existsById(userId)) {
+            throw new EntityNotFoundException("Usuario no encontrado con ID: " + userId);
+        }
+        // 2. Eliminar el usuario
+        userRepository.deleteById(userId);
+    }
 }

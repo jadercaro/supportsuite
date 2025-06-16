@@ -1,8 +1,6 @@
 package com.telco.users.service;
 
-// En el futuro, podríamos añadir aquí otros métodos de negocio, como:
-// import com.telco.users.dto.UserResponseDto;
-// import java.util.List;
+import com.telco.users.model.User;
 
 /**
  * Interfaz que define el contrato para los servicios de negocio relacionados con los usuarios.
@@ -11,6 +9,17 @@ package com.telco.users.service;
  */
 public interface IUserService {
 
-    // Por ahora, esta interfaz puede permanecer vacía. Su propósito principal es
-    // establecer un buen patrón de diseño.
+    /**
+     * Actualiza el rol de un usuario existente.
+     * @param userId El ID del usuario a modificar.
+     * @param newRoleId El ID del nuevo rol a asignar.
+     * @return El usuario actualizado.
+     */
+    User updateUserRole(Long userId, Long newRoleId);
+
+    /**
+     * Elimina un usuario del sistema.
+     * @param userId El ID del usuario a eliminar.
+     */
+    void deleteUser(Long userId);
 }
