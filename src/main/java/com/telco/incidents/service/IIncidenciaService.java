@@ -32,4 +32,12 @@ public interface IIncidenciaService {
      * @return La entidad Incidencia recién creada y guardada.
      */
     Incidencia crearIncidencia(IncidenciaRequestDTO requestDTO);
+
+    /**
+     * Busca una única incidencia por su ID.
+     * @param id El ID de la incidencia a buscar.
+     * @return La entidad Incidencia si se encuentra.
+     * @throws jakarta.persistence.EntityNotFoundException si no se encuentra la incidencia.
+     */
+    Incidencia findById(Long id);
 }
