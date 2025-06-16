@@ -36,11 +36,6 @@ public class DataLoader implements CommandLineRunner {
     @Override
     @Transactional // Envuelve toda la operación en una única transacción
     public void run(String... args) throws Exception {
-        // Si ya hay incidencias, asumimos que los datos ya fueron cargados.
-        if (incidenciaRepository.count() > 0) {
-            log.info("Los datos de prueba ya existen. Omitiendo la carga.");
-            return;
-        }
 
         log.info("Iniciando la carga de datos de prueba...");
 
@@ -53,61 +48,75 @@ public class DataLoader implements CommandLineRunner {
         User userTecnico1 = createUserIfNotFound("tecnico1@telconova.com", "Ana", "Gomez", "tecnico123", tecnicoRol);
         User userSupervisor1 = createUserIfNotFound("supervisor1@telconova.com", "Carlos", "Perez", "supervisor123", supervisorRol);
 
-        // --- 2. Crear Datos de Catálogo ---
-        log.info("Creando catálogos...");
-        Cliente cliente1 = createCliente("Empresa ABC", "contacto@abc.com", "555-0101");
-        Cliente cliente2 = createCliente("Compañía XYZ", "soporte@xyz.net", "555-0102");
+        // USuarios a borrar
+        User userParaBorrar1 = createUserIfNotFound("borrar1@telconova.com", "Usuario", "A Borrar 1", "borrar123", tecnicoRol);
+        User userParaBorrar2 = createUserIfNotFound("borrar2@telconova.com", "Usuario", "A Borrar 2", "borrar123", tecnicoRol);
 
-        TipoIncidencia tipoRed = createTipoIncidencia("Falla de Red");
-        TipoIncidencia tipoHardware = createTipoIncidencia("Equipo Defectuoso");
-        TipoIncidencia tipoSoftware = createTipoIncidencia("Falla de Software");
+        // --- Crear Incidencias (solo si no existen) ---
+        if (incidenciaRepository.count() == 0) {
+            log.info("No se encontraron incidencias, creando datos de prueba...");
 
-        ResultadoIncidencia resuelto = createResultadoIncidencia("Solucionado Exitosamente");
-        ResultadoIncidencia pendiente = createResultadoIncidencia("Requiere Segunda Visita");
+            log.info("Creando catálogos...");
+            // --- 2. Crear Datos de Catálogo ---
+            log.info("Creando catálogos...");
+            Cliente cliente1 = createCliente("Empresa ABC", "contacto@abc.com", "555-0101");
+            Cliente cliente2 = createCliente("Compañía XYZ", "soporte@xyz.net", "555-0102");
 
-        Zona zonaNorte = createZona("Norte");
-        Zona zonaSur = createZona("Sur");
+            TipoIncidencia tipoRed = createTipoIncidencia("Falla de Red");
+            TipoIncidencia tipoHardware = createTipoIncidencia("Equipo Defectuoso");
+            TipoIncidencia tipoSoftware = createTipoIncidencia("Falla de Software");
 
-        Etiqueta etiquetaVIP = createEtiqueta("VIP");
-        Etiqueta etiquetaUrgente = createEtiqueta("Urgente");
-        Etiqueta etiquetaSoftware = createEtiqueta("Software");
+            ResultadoIncidencia resuelto = createResultadoIncidencia("Solucionado Exitosamente");
+            ResultadoIncidencia pendiente = createResultadoIncidencia("Requiere Segunda Visita");
 
-        // --- 3. Crear Incidencias de Prueba ---
-        log.info("Creando incidencias de prueba...");
+            Zona zonaNorte = createZona("Norte");
+            Zona zonaSur = createZona("Sur");
 
-        // Incidencia 1: Resuelta, VIP y Urgente
-        Incidencia inc1 = new Incidencia();
-        inc1.setCliente(cliente1);
-        inc1.setUsuario(userTecnico1);
-        inc1.setTipoIncidencia(tipoHardware);
-        inc1.setResultadoIncidencia(resuelto);
-        inc1.setZona(zonaNorte);
-        inc1.setDescripcion("El router principal no enciende.");
-        inc1.setFecha(LocalDateTime.now().minusDays(5));
-        inc1.setEtiquetas(Set.of(etiquetaVIP, etiquetaUrgente));
-        incidenciaRepository.save(inc1);
+            Etiqueta etiquetaVIP = createEtiqueta("VIP");
+            Etiqueta etiquetaUrgente = createEtiqueta("Urgente");
+            Etiqueta etiquetaSoftware = createEtiqueta("Software");
 
-        // Incidencia 2: Pendiente, en otra zona
-        Incidencia inc2 = new Incidencia();
-        inc2.setCliente(cliente2);
-        inc2.setUsuario(userTecnico1);
-        inc2.setTipoIncidencia(tipoRed);
-        inc2.setResultadoIncidencia(pendiente);
-        inc2.setZona(zonaSur);
-        inc2.setDescripcion("Conexión intermitente en la oficina del segundo piso.");
-        inc2.setFecha(LocalDateTime.now().minusDays(2));
-        incidenciaRepository.save(inc2);
+            // --- 3. Crear Incidencias de Prueba ---
+            log.info("Creando incidencias de prueba...");
 
-        // Incidencia 3: Sin resultado aún, asignada al supervisor
-        Incidencia inc3 = new Incidencia();
-        inc3.setCliente(cliente1);
-        inc3.setUsuario(userSupervisor1);
-        inc3.setTipoIncidencia(tipoSoftware);
-        inc3.setZona(zonaNorte);
-        inc3.setDescripcion("El sistema de monitoreo no reporta datos.");
-        inc3.setFecha(LocalDateTime.now());
-        inc3.setEtiquetas(Set.of(etiquetaSoftware));
-        incidenciaRepository.save(inc3);
+            // Incidencia 1: Resuelta, VIP y Urgente
+            Incidencia inc1 = new Incidencia();
+            inc1.setCliente(cliente1);
+            inc1.setUsuario(userTecnico1);
+            inc1.setTipoIncidencia(tipoHardware);
+            inc1.setResultadoIncidencia(resuelto);
+            inc1.setZona(zonaNorte);
+            inc1.setDescripcion("El router principal no enciende.");
+            inc1.setFecha(LocalDateTime.now().minusDays(5));
+            inc1.setEtiquetas(Set.of(etiquetaVIP, etiquetaUrgente));
+            incidenciaRepository.save(inc1);
+
+            // Incidencia 2: Pendiente, en otra zona
+            Incidencia inc2 = new Incidencia();
+            inc2.setCliente(cliente2);
+            inc2.setUsuario(userTecnico1);
+            inc2.setTipoIncidencia(tipoRed);
+            inc2.setResultadoIncidencia(pendiente);
+            inc2.setZona(zonaSur);
+            inc2.setDescripcion("Conexión intermitente en la oficina del segundo piso.");
+            inc2.setFecha(LocalDateTime.now().minusDays(2));
+            incidenciaRepository.save(inc2);
+
+            // Incidencia 3: Sin resultado aún, asignada al supervisor
+            Incidencia inc3 = new Incidencia();
+            inc3.setCliente(cliente1);
+            inc3.setUsuario(userSupervisor1);
+            inc3.setTipoIncidencia(tipoSoftware);
+            inc3.setZona(zonaNorte);
+            inc3.setDescripcion("El sistema de monitoreo no reporta datos.");
+            inc3.setFecha(LocalDateTime.now());
+            inc3.setEtiquetas(Set.of(etiquetaSoftware));
+            incidenciaRepository.save(inc3);
+        } else {
+            log.info("Las incidencias de prueba ya existen.");
+        }
+
+        log.info("Carga de datos y verificación finalizada.");
 
         log.info("Carga de datos de prueba finalizada.");
     }
