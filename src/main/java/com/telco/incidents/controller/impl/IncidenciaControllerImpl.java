@@ -23,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import com.telco.incidents.controller.IIncidenciaController;
 
 @RestController
@@ -48,8 +51,14 @@ public class IncidenciaControllerImpl implements IIncidenciaController {
                 id, usuarioId, tipoId, resultadoId, pageable
         );
 
-        // 2. Mapear la página de entidades a una página de DTOs
-        Page<IncidenciaResponseDTO> dtoPage = incidenciaPage.map(incidenciaMapper::toDto);
+        // 2. Mapear la página de entidades a una página de DTOs y añadir enlaces HATEOAS
+        Page<IncidenciaResponseDTO> dtoPage = incidenciaPage.map(incidencia -> {
+            IncidenciaResponseDTO dto = incidenciaMapper.toDto(incidencia);
+            // Añade un enlace a sí mismo (self-link) para cada incidencia en la lista
+            dto.add(linkTo(methodOn(IncidenciaControllerImpl.class)
+                    .getIncidenciaById(incidencia.getId())).withSelfRel());
+            return dto;
+        });
 
         // 3. Devolver la página de DTOs en una respuesta 200 OK
         return ResponseEntity.ok(dtoPage);
@@ -81,7 +90,11 @@ public class IncidenciaControllerImpl implements IIncidenciaController {
         // 2. Mapear la entidad a un DTO de respuesta
         IncidenciaResponseDTO responseDTO = incidenciaMapper.toDto(incidencia);
 
-        // 3. Devolver el DTO en una respuesta 200 OK
+        // 3. Añadir enlaces HATEOAS
+        responseDTO.add(linkTo(methodOn(IncidenciaControllerImpl.class).getIncidenciaById(id)).withSelfRel());
+        responseDTO.add(linkTo(methodOn(IncidenciaControllerImpl.class)
+                .searchIncidents(null, null, null, null, null)).withRel("all-incidents"));
+
         return ResponseEntity.ok(responseDTO);
     }
 }
