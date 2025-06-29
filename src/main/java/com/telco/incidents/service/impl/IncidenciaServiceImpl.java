@@ -15,8 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.persistence.EntityNotFoundException;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,7 +40,7 @@ public class IncidenciaServiceImpl implements IIncidenciaService {
             Long resultadoId,
             Pageable pageable) {
 
-        // 1. Empezamos con una especificación que no hace nada (devuelve todo).
+        // 1. Empezamos con una especificación que no hace nada 
         Specification<Incidencia> spec = Specification.where(null);
 
         // 2. Añadimos condiciones dinámicamente solo si el filtro no es nulo.

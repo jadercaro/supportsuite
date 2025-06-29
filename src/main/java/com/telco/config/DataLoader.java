@@ -44,13 +44,8 @@ public class DataLoader implements CommandLineRunner {
         Rol tecnicoRol = createRolIfNotFound("tecnico");
         Rol supervisorRol = createRolIfNotFound("supervisor"); // Nuevo rol
 
-        User userAdmin = createUserIfNotFound("admin@telconova.com", "Admin", "User", "admin123", adminRol);
         User userTecnico1 = createUserIfNotFound("tecnico1@telconova.com", "Ana", "Gomez", "tecnico123", tecnicoRol);
         User userSupervisor1 = createUserIfNotFound("supervisor1@telconova.com", "Carlos", "Perez", "supervisor123", supervisorRol);
-
-        // USuarios a borrar
-        User userParaBorrar1 = createUserIfNotFound("borrar1@telconova.com", "Usuario", "A Borrar 1", "borrar123", tecnicoRol);
-        User userParaBorrar2 = createUserIfNotFound("borrar2@telconova.com", "Usuario", "A Borrar 2", "borrar123", tecnicoRol);
 
         // --- Crear Incidencias (solo si no existen) ---
         if (incidenciaRepository.count() == 0) {

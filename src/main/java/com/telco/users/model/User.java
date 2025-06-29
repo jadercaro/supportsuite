@@ -57,7 +57,7 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
+    public String getEmail() {
         // Devolvemos el correo como nombre de usuario para Spring Security
         return this.email;
     }

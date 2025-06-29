@@ -10,6 +10,15 @@ import org.springframework.stereotype.Component;
 public class IncidenciaSpecification {
 
     /**
+     * Constructor privado para evitar instanciación.
+     * Esta clase es un utility class que solo contiene métodos estáticos.
+     */
+    private IncidenciaSpecification() {
+        throw new UnsupportedOperationException("Utility class");
+
+    }
+
+    /**
      * Devuelve una Specification que filtra por el ID de la incidencia.
      */
     public static Specification<Incidencia> hasId(Long id) {

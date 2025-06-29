@@ -20,13 +20,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
-import com.telco.incidents.controller.IIncidenciaController;
 
 @RestController
 @RequestMapping("/api/incidents")
@@ -80,7 +77,7 @@ public class IncidenciaControllerImpl implements IIncidenciaController {
     }
 
     @Override
-    @GetMapping("/{id}") // Mapea a peticiones GET a /api/incidents/{un_numero}
+    @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'TECHNICIAN')") // Permitimos que todos los usuarios logueados vean los detalles
     public ResponseEntity<IncidenciaResponseDTO> getIncidenciaById(@PathVariable Long id) {
 
